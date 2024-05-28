@@ -1,0 +1,11 @@
+SET TIME ZONE 'America/Santiago';
+
+CREATE TABLE IF NOT EXISTS users (
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    email VARCHAR(50) NOT NULL UNIQUE,
+    password VARCHAR(60) NOT NULL,
+    position VARCHAR(25) NOT NULL,
+    lenguage TEXT NOT NULL,
+    registration_date TIMESTAMPZ DEFAULT CURRENT_TIMESTAMP,
+    last_login TIMESTAMPZ NOT NULL
+);

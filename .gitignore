@@ -186,3 +186,6 @@ sketch
 
 logs.json
 pnpm-lock.yaml
+
+# Docker PostgreSQL local storage
+pgdata/
