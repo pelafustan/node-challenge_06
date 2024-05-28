@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS users (
     email VARCHAR(50) NOT NULL UNIQUE,
     password VARCHAR(60) NOT NULL,
     position VARCHAR(25) NOT NULL,
-    lenguage TEXT NOT NULL,
+    lenguage VARCHAR(25) NOT NULL,
     registration_date TIMESTAMPZ DEFAULT CURRENT_TIMESTAMP,
-    last_login TIMESTAMPZ NOT NULL
+    last_login TIMESTAMPZ NOT NULL CURRENT_TIMESTAMP,
 );
