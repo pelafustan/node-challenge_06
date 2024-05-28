@@ -31,6 +31,8 @@ const checkCredentials = async (email, password) => {
         throw { code: 401, message: 'Password and email do not match' };
     }
 
+    await pool.query('UPDATE users SET last_login=CURRENT_TIMESTAMP WHERE email=$1', [email]);
+
     const token = jwt.sign({ email }, SECRET, { expiresIn: '10 minutes' });
 
     return token;
@@ -61,4 +63,37 @@ const addUser = async (user) => {
     if (!rowCount) throw { code: 500, message: 'User cannot be created!' };
 };
 
-module.exports = { getUserData, addUser, checkCredentials };
+// update user records
+const updateUserData = async (token, user) => {
+    try {
+        const { email } = jwt.verify(token, SECRET);
+        const { newEmail, newRole, newLanguage } = user;
+
+        if (!newEmail || !newRole || !newLanguage) {
+            throw { code: 400, message: 'Bad request. User not updated' };
+        }
+
+        const columns = [];
+        const updateValues = [];
+        const values = [];
+
+        const queryBuilder = (col, update) => {
+            values.push(col);
+            columns.push(`$${values.length}`);
+            
+            values.push(update);
+            updateValues.push(`$${values.length}`);
+        };
+
+        if (newEmail) queryBuilder('email', newEmail);
+        if (newRole) queryBuilder('role', newRole);
+        if (newLanguage) queryBuilder('language', newLanguage);
+
+        const query = `UPDATE users (${columns.join()}) VALUES (${updateValues.join()}) WHERE email = $${values.length + 1}`
+        await pool.query(query, [...values, email]);
+    } catch (err) {
+        throw { code: err.code, message: err.message };
+    }
+};
+
+module.exports = { getUserData, addUser, checkCredentials, updateUserData };

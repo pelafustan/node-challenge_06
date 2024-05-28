@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const { checkCredentials, getUserData } = require('./queries');
+const { checkCredentials, getUserData, addUser } = require('./queries');
 
 const PORT = process.env.API_PORT || 3000;
 
@@ -41,6 +41,29 @@ app.get('/user', async (req, res) => {
     } catch (err) {
         console.log(err);
         res.status(err.code || 500).send(err.message || 'Something went wrong.');
+    }
+});
+
+app.post('/new-user', async (req, res) => {
+    try {
+        const user = req.body;
+        await addUser(user);
+        res.status(200).send('user created!');
+    } catch (err) {
+        console.log(err);
+        res.status(err.code || 500).send(err);
+    }
+});
+
+app.put('/user', async (req, res) => {
+    try {
+        const token = req.header('Authorization').split('Bearer ')[1];
+        const user = req.body;
+        await updateUserData(token, user);
+        res.status(200).send('user updated!');
+    } catch (err) {
+        console.log(err);
+        res.status(err.code || 500).send(err);
     }
 });
 
