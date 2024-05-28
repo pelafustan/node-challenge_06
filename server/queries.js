@@ -31,7 +31,7 @@ const checkCredentials = async (email, password) => {
         throw { code: 401, message: 'Password and email do not match' };
     }
 
-    await pool.query('UPDATE users SET last_login=CURRENT_TIMESTAMPT WHERE email=$1', [email]);
+    await pool.query('UPDATE users SET last_login=CURRENT_TIMESTAMP WHERE email=$1', [email]);
 
     const token = jwt.sign({ email }, SECRET, { expiresIn: '10 minutes' });
 
